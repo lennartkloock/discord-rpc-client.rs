@@ -5,6 +5,7 @@
 
 Discord RPC client for Rust
 
+This crate uses a deprecated feature of Discord as specified [here](https://discord.com/developers/docs/rich-presence/how-to). Please use the newer [discord game sdk](https://discord.com/developers/docs/game-sdk/sdk-starter-guide).
 
 ## Installation
 
