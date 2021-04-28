@@ -5,3 +5,7 @@ Cargo.lock
 # CI
 /.rustup
 /.cargo
+
+# IntelliJ IDEA
+.idea/
+*.iml
