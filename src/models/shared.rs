@@ -1,6 +1,8 @@
-builder!{PartialUser
-    id:            String,
-    username:      String,
-    discriminator: String,
-    avatar:        String,
+builder!{
+    PartialUser {
+        id:            String,
+        username:      String,
+        discriminator: String,
+        avatar:        String,
+    }
 }

@@ -24,6 +24,7 @@ extern crate discord_rpc_client;
 
 use std::{env, thread, time};
 use discord_rpc_client::Client;
+use discord_rpc_client::models::ActivityBuilder;
 
 fn main() {
     // Get our main status message
@@ -36,8 +37,10 @@ fn main() {
     drpc.start();
 
     // Set the activity
-    drpc.set_activity(|act| act.state(state_message))
-        .expect("Failed to set activity");
+    let activity = ActivityBuilder::default()
+        .state(state_message)
+        .build().unwrap();
+    drpc.set_activity(activity).expect("Failed to set activity");
 
     // Wait 10 seconds before exiting
     thread::sleep(time::Duration::from_secs(10));

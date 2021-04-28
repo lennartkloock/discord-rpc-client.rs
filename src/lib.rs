@@ -10,6 +10,8 @@ extern crate uuid;
 extern crate bytes;
 extern crate parking_lot;
 extern crate crossbeam_channel;
+#[macro_use]
+extern crate derive_builder;
 #[cfg(windows)]
 extern crate named_pipe;
 

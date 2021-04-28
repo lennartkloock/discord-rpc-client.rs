@@ -4,6 +4,7 @@ extern crate discord_rpc_client;
 use std::io;
 use simplelog::*;
 use discord_rpc_client::Client as DiscordRPC;
+use discord_rpc_client::models::*;
 
 fn main() {
     TermLogger::init(LevelFilter::Debug, Config::default()).unwrap();
@@ -23,14 +24,31 @@ fn main() {
                 println!("Failed to clear presence: {}", why);
             }
         } else {
-            if let Err(why) = drpc.set_activity(|a| a
-                .state(buf)
-                .assets(|ass| ass
-                    .large_image("ferris_wat")
-                    .large_text("wat.")
-                    .small_image("rusting")
-                    .small_text("rusting...")))
-            {
+            if let Err(why) = drpc.set_activity({
+                let assets = ActivityAssetsBuilder::default()
+                    .large_image("ferris_wat".into())
+                    .large_text("wat.".into())
+                    .small_image("rusting".into())
+                    .small_text("rusting...".into())
+                    .build()
+                    .unwrap();
+                let button = ActivityButtonBuilder::default()
+                    .label("Example".into())
+                    .url("https://example.com".into())
+                    .build()
+                    .unwrap();
+                let button2 = ActivityButtonBuilder::default()
+                    .label("Rust".into())
+                    .url("https://rust-lang.org".into())
+                    .build()
+                    .unwrap();
+                ActivityBuilder::default()
+                    .state(buf)
+                    .assets(assets)
+                    .buttons(vec![button, button2])
+                    .build()
+                    .unwrap()
+            }) {
                 println!("Failed to set presence: {}", why);
             }
         }

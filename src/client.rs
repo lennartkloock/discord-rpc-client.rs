@@ -52,10 +52,8 @@ impl Client {
     }
 
     #[cfg(feature = "rich_presence")]
-    pub fn set_activity<F>(&mut self, f: F) -> Result<Payload<Activity>>
-        where F: FnOnce(Activity) -> Activity
-    {
-        self.execute(Command::SetActivity, SetActivityArgs::new(f), None)
+    pub fn set_activity(&mut self, activity: Activity) -> Result<Payload<Activity>> {
+        self.execute(Command::SetActivity, SetActivityArgs::new(activity), None)
     }
 
     #[cfg(feature = "rich_presence")]
@@ -76,15 +74,11 @@ impl Client {
         self.execute(Command::CloseActivityRequest, CloseActivityRequestArgs::new(user_id), None)
     }
 
-    pub fn subscribe<F>(&mut self, evt: Event, f: F) -> Result<Payload<Subscription>>
-        where F: FnOnce(SubscriptionArgs) -> SubscriptionArgs
-    {
-        self.execute(Command::Subscribe, f(SubscriptionArgs::new()), Some(evt))
+    pub fn subscribe(&mut self, evt: Event, args: SubscriptionArgs) -> Result<Payload<Subscription>> {
+        self.execute(Command::Subscribe, args, Some(evt))
     }
 
-    pub fn unsubscribe<F>(&mut self, evt: Event, f: F) -> Result<Payload<Subscription>>
-        where F: FnOnce(SubscriptionArgs) -> SubscriptionArgs
-    {
-        self.execute(Command::Unsubscribe, f(SubscriptionArgs::new()), Some(evt))
+    pub fn unsubscribe(&mut self, evt: Event, args: SubscriptionArgs) -> Result<Payload<Subscription>> {
+        self.execute(Command::Unsubscribe, args, Some(evt))
     }
 }
