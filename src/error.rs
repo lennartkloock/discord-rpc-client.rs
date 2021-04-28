@@ -1,5 +1,4 @@
 use std::{
-    error::Error as StdError,
     io::Error as IoError,
     result::Result as StdResult,
     sync::mpsc::RecvTimeoutError as ChannelTimeout,
@@ -24,20 +23,7 @@ pub enum Error {
 
 impl Display for Error {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-        f.write_str(self.description())
-    }
-}
-
-impl StdError for Error {
-    fn description(&self) -> &str {
-        match *self {
-            Error::Conversion => "Failed to convert values",
-            Error::SubscriptionFailed => "Failed to subscribe to event",
-            Error::ConnectionClosed => "Connection closed",
-            Error::IoError(ref err) => err.description(),
-            Error::JsonError(ref err) => err.description(),
-            Error::Timeout(ref err) => err.description(),
-        }
+        write!(f, "{}", self)
     }
 }
 
