@@ -9,13 +9,18 @@ use std::{
     sync::mpsc::RecvTimeoutError as ChannelTimeout,
 };
 
+use crossbeam_channel::{RecvError, SendError};
 use serde_json::Error as JsonError;
+
+use models::Message;
 
 #[derive(Debug)]
 pub enum Error {
     IoError(IoError),
     JsonError(JsonError),
     Timeout(ChannelTimeout),
+    SendError(SendError<Message>),
+    RecvError(RecvError),
     Conversion,
     SubscriptionFailed,
     ConnectionClosed,

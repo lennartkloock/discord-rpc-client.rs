@@ -51,12 +51,12 @@ impl Manager {
     }
 
     pub fn send(&self, message: Message) -> Result<()> {
-        self.outbound.1.send(message).unwrap();
+        self.outbound.1.send(message).map_err(|err| Error::SendError(err))?;
         Ok(())
     }
 
     pub fn recv(&self) -> Result<Message> {
-        let message = self.inbound.0.recv().unwrap();
+        let message = self.inbound.0.recv().map_err(|err| Error::RecvError(err))?;
         Ok(message)
     }
 

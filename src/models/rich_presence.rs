@@ -58,17 +58,33 @@ builder! {
 }
 
 
-builder! {
-    Activity {
-        state: String,
-        details: String,
-        instance: bool,
-        timestamps: ActivityTimestamps,
-        assets: ActivityAssets,
-        party: ActivityParty,
-        secrets: ActivitySecrets,
-        buttons: Vec<ActivityButton>,
-    }
+#[derive(Builder, Clone, Debug, Default, PartialEq, Deserialize, Serialize)]
+#[builder(setter(strip_option))]
+pub struct Activity {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    state: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    details: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    instance: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    timestamps: Option<ActivityTimestamps>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    assets: Option<ActivityAssets>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    party: Option<ActivityParty>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    secrets: Option<ActivitySecrets>,
+    #[serde(skip_serializing_if = "Option::is_none", skip_deserializing)]
+    #[builder(default)]
+    buttons: Option<Vec<ActivityButton>>,
 }
 
 builder! {
