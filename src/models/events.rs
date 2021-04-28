@@ -1,7 +1,6 @@
 use super::shared::PartialUser;
 
-
-builder!{
+builder! {
     ReadyEvent {
         v:      u32,
         config: RpcServerConfiguration,
@@ -9,14 +8,14 @@ builder!{
     }
 }
 
-builder!{
+builder! {
     ErrorEvent {
         code: u32,
         message: String,
     }
 }
 
-builder!{
+builder! {
     RpcServerConfiguration {
         cdn_host: String,
         api_endpoint: String,

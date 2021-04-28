@@ -1,14 +1,13 @@
 use super::shared::PartialUser;
 
-
-builder!{
+builder! {
     SubscriptionArgs {
         secret: String,     // Activity{Join,Spectate}
         user: PartialUser,  // ActivityJoinRequest
     }
 }
 
-builder!{
+builder! {
     Subscription {
         evt: String,
     }

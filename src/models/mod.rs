@@ -1,3 +1,9 @@
+pub use self::commands::*;
+pub use self::events::*;
+pub use self::message::{Message, OpCode};
+#[cfg(feature = "rich_presence")]
+pub use self::rich_presence::*;
+
 mod shared;
 pub mod message;
 pub mod payload;
@@ -34,30 +40,23 @@ pub enum Event {
     ActivityJoinRequest,
 }
 
-pub use self::message::{Message, OpCode};
-pub use self::commands::*;
-pub use self::events::*;
-
-#[cfg(feature = "rich_presence")]
-pub use self::rich_presence::*;
-
 pub mod prelude {
     pub use super::Command;
+    pub use super::commands::{
+        Subscription, SubscriptionArgs,
+    };
     pub use super::Event;
+    pub use super::events::{
+        ErrorEvent,
+        ReadyEvent,
+    };
     #[cfg(feature = "rich_presence")]
     pub use super::rich_presence::{
-        SetActivityArgs,
-        SendActivityJoinInviteArgs,
-        CloseActivityRequestArgs,
         ActivityJoinEvent,
+        ActivityJoinRequestEvent,
         ActivitySpectateEvent,
-        ActivityJoinRequestEvent
-    };
-    pub use super::commands::{
-        SubscriptionArgs, Subscription
-    };
-    pub use super::events::{
-        ReadyEvent,
-        ErrorEvent,
+        CloseActivityRequestArgs,
+        SendActivityJoinInviteArgs,
+        SetActivityArgs,
     };
 }

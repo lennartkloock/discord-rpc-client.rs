@@ -1,21 +1,20 @@
 use std::{
+    io::ErrorKind,
+    sync::Arc,
     thread,
-    sync::{
-        Arc,
-    },
     time,
-    io::ErrorKind
 };
-use crossbeam_channel::{unbounded, Receiver, Sender};
+
+use crossbeam_channel::{Receiver, Sender, unbounded};
 use parking_lot::Mutex;
+
+use error::{Error, Result};
+use models::Message;
 
 use super::{
     Connection,
     SocketConnection,
 };
-use models::Message;
-use error::{Result, Error};
-
 
 type Tx = Sender<Message>;
 type Rx = Receiver<Message>;
@@ -85,7 +84,6 @@ impl Manager {
         self.handshake_completed = false;
         self.connection = Arc::new(None);
     }
-
 }
 
 
@@ -109,7 +107,7 @@ fn send_and_receive_loop(mut manager: Manager) {
                 }
 
                 thread::sleep(time::Duration::from_millis(500));
-            },
+            }
             None => {
                 match manager.connect() {
                     Err(err) => {
@@ -118,7 +116,7 @@ fn send_and_receive_loop(mut manager: Manager) {
                             why => error!("Failed to connect: {:?}", why),
                         }
                         thread::sleep(time::Duration::from_secs(10));
-                    },
+                    }
                     _ => manager.handshake_completed = true,
                 }
             }

@@ -1,4 +1,4 @@
-builder!{
+builder! {
     PartialUser {
         id:            String,
         username:      String,

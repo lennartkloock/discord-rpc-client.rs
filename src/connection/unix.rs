@@ -1,14 +1,14 @@
 use std::{
-    time,
-    path::PathBuf,
     env,
-    os::unix::net::UnixStream,
     net::Shutdown,
+    os::unix::net::UnixStream,
+    path::PathBuf,
+    time,
 };
 
-use super::base::Connection;
 use error::Result;
 
+use super::base::Connection;
 
 pub struct UnixConnection {
     socket: UnixStream,

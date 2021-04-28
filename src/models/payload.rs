@@ -2,12 +2,12 @@ use std::{
     convert::From,
 };
 
-use serde::{Serialize, de::DeserializeOwned};
+use serde::{de::DeserializeOwned, Serialize};
 use serde_json;
 
-use super::{Command, Event, Message};
 use utils;
 
+use super::{Command, Event, Message};
 
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct Payload<T>

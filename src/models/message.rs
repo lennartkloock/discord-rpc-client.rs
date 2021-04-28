@@ -1,11 +1,10 @@
-use std::io::{self, Write, Read};
+use std::io::{self, Read, Write};
 
-use byteorder::{WriteBytesExt, ReadBytesExt, LittleEndian};
-use serde_json;
+use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use serde::Serialize;
+use serde_json;
 
-use error::{Result, Error};
-
+use error::{Error, Result};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum OpCode {
@@ -72,7 +71,7 @@ mod tests {
 
     #[derive(Debug, PartialEq, Serialize, Deserialize)]
     struct Something {
-        empty: bool
+        empty: bool,
     }
 
     #[test]

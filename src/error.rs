@@ -1,15 +1,15 @@
 use std::{
-    io::Error as IoError,
-    result::Result as StdResult,
-    sync::mpsc::RecvTimeoutError as ChannelTimeout,
     fmt::{
         self,
         Display,
-        Formatter
+        Formatter,
     },
+    io::Error as IoError,
+    result::Result as StdResult,
+    sync::mpsc::RecvTimeoutError as ChannelTimeout,
 };
-use serde_json::Error as JsonError;
 
+use serde_json::Error as JsonError;
 
 #[derive(Debug)]
 pub enum Error {

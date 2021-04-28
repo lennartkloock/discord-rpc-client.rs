@@ -1,25 +1,24 @@
-use serde::{Serialize, de::DeserializeOwned};
+use serde::{de::DeserializeOwned, Serialize};
 #[allow(unused)]
 use serde_json::Value;
 
 use connection::Manager as ConnectionManager;
+use error::{Error, Result};
 use models::{
-    OpCode,
     Command,
+    commands::{Subscription, SubscriptionArgs},
     Event,
-    payload::Payload,
     message::Message,
-    commands::{SubscriptionArgs, Subscription},
+    OpCode,
+    payload::Payload,
 };
 #[cfg(feature = "rich_presence")]
 use models::rich_presence::{
-    SetActivityArgs,
     Activity,
-    SendActivityJoinInviteArgs,
     CloseActivityRequestArgs,
+    SendActivityJoinInviteArgs,
+    SetActivityArgs,
 };
-use error::{Result, Error};
-
 
 #[derive(Clone)]
 pub struct Client {

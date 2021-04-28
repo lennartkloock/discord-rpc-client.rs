@@ -2,9 +2,9 @@
 
 use std::default::Default;
 
-use super::shared::PartialUser;
 use utils;
 
+use super::shared::PartialUser;
 
 #[derive(Debug, PartialEq, Deserialize, Serialize)]
 pub struct SetActivityArgs {
@@ -39,26 +39,26 @@ impl SendActivityJoinInviteArgs {
     }
 }
 
-builder!{
+builder! {
     ActivityJoinEvent {
         secret: String,
     }
 }
 
-builder!{
+builder! {
     ActivitySpectateEvent {
         secret: String,
     }
 }
 
-builder!{
+builder! {
     ActivityJoinRequestEvent {
         user: PartialUser,
     }
 }
 
 
-builder!{
+builder! {
     Activity {
         state: String,
         details: String,
@@ -71,14 +71,14 @@ builder!{
     }
 }
 
-builder!{
+builder! {
     ActivityTimestamps {
         start: u64,
         end: u64,
     }
 }
 
-builder!{
+builder! {
     ActivityAssets {
         large_image: String,
         large_text: String,
@@ -87,14 +87,14 @@ builder!{
     }
 }
 
-builder!{
+builder! {
     ActivityParty {
         id: u32,
         size: (u32, u32),
     }
 }
 
-builder!{
+builder! {
     ActivityButton {
         label: String,
         url: String,
@@ -118,11 +118,12 @@ pub struct ActivitySecrets {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use serde_json;
 
+    use super::*;
+
     const FULL_JSON: &'static str =
-r###"{
+        r###"{
   "state": "rusting",
   "details": "detailed",
   "instance": true,
