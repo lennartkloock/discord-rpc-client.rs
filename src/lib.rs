@@ -20,9 +20,8 @@ pub use connection::{Connection, SocketConnection};
 
 #[macro_use]
 mod macros;
-mod error;
-mod utils;
-mod connection;
-pub mod models;
 pub mod client;
-
+mod connection;
+mod error;
+pub mod models;
+mod utils;

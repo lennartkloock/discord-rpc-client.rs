@@ -1,9 +1,5 @@
 use std::{
-    fmt::{
-        self,
-        Display,
-        Formatter,
-    },
+    fmt::{self, Display, Formatter},
     io::Error as IoError,
     result::Result as StdResult,
     sync::mpsc::RecvTimeoutError as ChannelTimeout,

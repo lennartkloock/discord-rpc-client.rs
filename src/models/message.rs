@@ -24,7 +24,7 @@ impl OpCode {
             2 => Ok(OpCode::Close),
             3 => Ok(OpCode::Ping),
             4 => Ok(OpCode::Pong),
-            _ => Err(Error::Conversion)
+            _ => Err(Error::Conversion),
         }
     }
 }
@@ -37,9 +37,13 @@ pub struct Message {
 
 impl Message {
     pub fn new<T>(opcode: OpCode, payload: T) -> Self
-        where T: Serialize
+        where
+            T: Serialize,
     {
-        Self { opcode, payload: serde_json::to_string(&payload).unwrap() }
+        Self {
+            opcode,
+            payload: serde_json::to_string(&payload).unwrap(),
+        }
     }
 
     pub fn encode(&self) -> Result<Vec<u8>> {
@@ -63,7 +67,6 @@ impl Message {
         Ok(Self { opcode, payload })
     }
 }
-
 
 #[cfg(test)]
 mod tests {

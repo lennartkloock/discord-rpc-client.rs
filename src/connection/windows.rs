@@ -1,7 +1,4 @@
-use std::{
-    path::PathBuf,
-    time,
-};
+use std::{path::PathBuf, time};
 
 use error::Result;
 use named_pipe::PipeClient;

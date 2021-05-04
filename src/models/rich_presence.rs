@@ -16,13 +16,19 @@ pub struct SetActivityArgs {
 
 impl SetActivityArgs {
     pub fn new(activity: Activity) -> Self {
-        Self { pid: utils::pid(), activity: Some(activity) }
+        Self {
+            pid: utils::pid(),
+            activity: Some(activity),
+        }
     }
 }
 
 impl Default for SetActivityArgs {
     fn default() -> Self {
-        Self { pid: utils::pid(), activity: None }
+        Self {
+            pid: utils::pid(),
+            activity: None,
+        }
     }
 }
 
@@ -35,7 +41,9 @@ pub type CloseActivityRequestArgs = SendActivityJoinInviteArgs;
 
 impl SendActivityJoinInviteArgs {
     pub fn new(user_id: u64) -> Self {
-        Self { user_id: user_id.to_string() }
+        Self {
+            user_id: user_id.to_string(),
+        }
     }
 }
 
@@ -56,7 +64,6 @@ builder! {
         user: PartialUser,
     }
 }
-
 
 #[derive(Builder, Clone, Debug, Default, PartialEq, Deserialize, Serialize)]
 #[builder(setter(strip_option))]
@@ -131,15 +138,13 @@ pub struct ActivitySecrets {
     game: Option<String>,
 }
 
-
 #[cfg(test)]
 mod tests {
     use serde_json;
 
     use super::*;
 
-    const FULL_JSON: &'static str =
-        r###"{
+    const FULL_JSON: &'static str = r###"{
   "state": "rusting",
   "details": "detailed",
   "instance": true,
@@ -178,26 +183,31 @@ mod tests {
         let timestamps = ActivityTimestampsBuilder::default()
             .start(1000)
             .end(2000)
-            .build().unwrap();
+            .build()
+            .unwrap();
         let assets = ActivityAssetsBuilder::default()
             .large_image("ferris".into())
             .large_text("Ferris".into())
             .small_image("rusting".into())
             .small_text("Rusting...".into())
-            .build().unwrap();
+            .build()
+            .unwrap();
         let party = ActivityPartyBuilder::default()
             .id(1)
             .size((3, 6))
-            .build().unwrap();
+            .build()
+            .unwrap();
         let secrets = ActivitySecretsBuilder::default()
             .join("025ed05c71f639de8bfaa0d679d7c94b2fdce12f".into())
             .spectate("e7eb30d2ee025ed05c71ea495f770b76454ee4e0".into())
             .game("4b2fdce12f639de8bfa7e3591b71a0d679d7c93f".into())
-            .build().unwrap();
+            .build()
+            .unwrap();
         let button = ActivityButtonBuilder::default()
             .label("Click me!".into())
             .url("https://example.com".into())
-            .build().unwrap();
+            .build()
+            .unwrap();
         let activity = ActivityBuilder::default()
             .state("rusting".into())
             .details("detailed".into())
@@ -207,7 +217,8 @@ mod tests {
             .party(party)
             .secrets(secrets)
             .buttons(vec![button])
-            .build().unwrap();
+            .build()
+            .unwrap();
 
         let json = serde_json::to_string_pretty(&activity).unwrap();
 

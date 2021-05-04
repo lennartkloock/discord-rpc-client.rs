@@ -8,16 +8,11 @@ use models::{
     Command,
     commands::{Subscription, SubscriptionArgs},
     Event,
-    message::Message,
-    OpCode,
-    payload::Payload,
+    message::Message, OpCode, payload::Payload,
 };
 #[cfg(feature = "rich_presence")]
 use models::rich_presence::{
-    Activity,
-    CloseActivityRequestArgs,
-    SendActivityJoinInviteArgs,
-    SetActivityArgs,
+    Activity, CloseActivityRequestArgs, SendActivityJoinInviteArgs, SetActivityArgs,
 };
 
 #[derive(Clone)]
@@ -36,17 +31,21 @@ impl Client {
     }
 
     fn execute<A, E>(&mut self, cmd: Command, args: A, evt: Option<Event>) -> Result<Payload<E>>
-        where A: Serialize + Send + Sync,
-              E: Serialize + DeserializeOwned + Send + Sync
+        where
+            A: Serialize + Send + Sync,
+            E: Serialize + DeserializeOwned + Send + Sync,
     {
-        let message = Message::new(OpCode::Frame, Payload::with_nonce(cmd, Some(args), None, evt));
+        let message = Message::new(
+            OpCode::Frame,
+            Payload::with_nonce(cmd, Some(args), None, evt),
+        );
         self.connection_manager.send(message)?;
         let Message { payload, .. } = self.connection_manager.recv()?;
         let response: Payload<E> = serde_json::from_str(&payload)?;
 
         match response.evt {
             Some(Event::Error) => Err(Error::SubscriptionFailed),
-            _ => Ok(response)
+            _ => Ok(response),
         }
     }
 
@@ -65,19 +64,35 @@ impl Client {
     //       they are not documented.
     #[cfg(feature = "rich_presence")]
     pub fn send_activity_join_invite(&mut self, user_id: u64) -> Result<Payload<Value>> {
-        self.execute(Command::SendActivityJoinInvite, SendActivityJoinInviteArgs::new(user_id), None)
+        self.execute(
+            Command::SendActivityJoinInvite,
+            SendActivityJoinInviteArgs::new(user_id),
+            None,
+        )
     }
 
     #[cfg(feature = "rich_presence")]
     pub fn close_activity_request(&mut self, user_id: u64) -> Result<Payload<Value>> {
-        self.execute(Command::CloseActivityRequest, CloseActivityRequestArgs::new(user_id), None)
+        self.execute(
+            Command::CloseActivityRequest,
+            CloseActivityRequestArgs::new(user_id),
+            None,
+        )
     }
 
-    pub fn subscribe(&mut self, evt: Event, args: SubscriptionArgs) -> Result<Payload<Subscription>> {
+    pub fn subscribe(
+        &mut self,
+        evt: Event,
+        args: SubscriptionArgs,
+    ) -> Result<Payload<Subscription>> {
         self.execute(Command::Subscribe, args, Some(evt))
     }
 
-    pub fn unsubscribe(&mut self, evt: Event, args: SubscriptionArgs) -> Result<Payload<Subscription>> {
+    pub fn unsubscribe(
+        &mut self,
+        evt: Event,
+        args: SubscriptionArgs,
+    ) -> Result<Payload<Subscription>> {
         self.execute(Command::Unsubscribe, args, Some(evt))
     }
 }

@@ -1,4 +1,4 @@
-pub use self::base::Connection as Connection;
+pub use self::base::Connection;
 pub use self::manager::Manager;
 #[cfg(unix)]
 pub use self::unix::UnixConnection as SocketConnection;
@@ -11,4 +11,3 @@ mod manager;
 mod unix;
 #[cfg(windows)]
 mod windows;
-

@@ -2,8 +2,7 @@ use std::{
     io::{ErrorKind, Read, Write},
     marker::Sized,
     path::PathBuf,
-    thread,
-    time,
+    thread, time,
 };
 
 use bytes::BytesMut;
@@ -26,7 +25,6 @@ macro_rules! try_until_done {
         }
     }
 }
-
 
 pub trait Connection: Sized {
     type Socket: Write + Read;
