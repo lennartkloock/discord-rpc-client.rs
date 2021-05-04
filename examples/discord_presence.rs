@@ -1,8 +1,11 @@
-extern crate simplelog;
 extern crate discord_rpc_client;
+extern crate simplelog;
 
-use std::io;
+use std::{io, thread};
+use std::time::Duration;
+
 use simplelog::*;
+
 use discord_rpc_client::Client as DiscordRPC;
 use discord_rpc_client::models::*;
 
@@ -11,7 +14,7 @@ fn main() {
 
     let mut drpc = DiscordRPC::new(425407036495495169);
 
-    drpc.start();
+    drpc.start(2);
 
     loop {
         let mut buf = String::new();
@@ -52,5 +55,5 @@ fn main() {
                 println!("Failed to set presence: {}", why);
             }
         }
-    };
+    }
 }

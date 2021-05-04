@@ -1,9 +1,4 @@
-use std::{
-    io::ErrorKind,
-    sync::Arc,
-    thread,
-    time,
-};
+use std::{io::ErrorKind, sync::Arc, thread, time};
 
 use crossbeam_channel::{Receiver, Sender, unbounded};
 use parking_lot::Mutex;
@@ -11,10 +6,7 @@ use parking_lot::Mutex;
 use error::{Error, Result};
 use models::Message;
 
-use super::{
-    Connection,
-    SocketConnection,
-};
+use super::{Connection, SocketConnection};
 
 type Tx = Sender<Message>;
 type Rx = Receiver<Message>;
@@ -43,15 +35,18 @@ impl Manager {
         }
     }
 
-    pub fn start(&mut self) {
+    pub fn start(&mut self, retries: u32) {
         let manager_inner = self.clone();
         thread::spawn(move || {
-            send_and_receive_loop(manager_inner);
+            send_and_receive_loop(manager_inner, retries);
         });
     }
 
     pub fn send(&self, message: Message) -> Result<()> {
-        self.outbound.1.send(message).map_err(|err| Error::SendError(err))?;
+        self.outbound
+            .1
+            .send(message)
+            .map_err(|err| Error::SendError(err))?;
         Ok(())
     }
 
@@ -86,14 +81,14 @@ impl Manager {
     }
 }
 
-
-fn send_and_receive_loop(mut manager: Manager) {
+fn send_and_receive_loop(mut manager: Manager, retries: u32) {
     debug!("Starting sender loop");
 
     let mut inbound = manager.inbound.1.clone();
     let outbound = manager.outbound.0.clone();
 
-    loop {
+    let mut err_counter = 0;
+    while err_counter < retries {
         let connection = manager.connection.clone();
 
         match *connection {
@@ -108,23 +103,33 @@ fn send_and_receive_loop(mut manager: Manager) {
 
                 thread::sleep(time::Duration::from_millis(500));
             }
-            None => {
-                match manager.connect() {
-                    Err(err) => {
-                        match err {
-                            Error::IoError(ref err) if err.kind() == ErrorKind::ConnectionRefused => (),
-                            why => error!("Failed to connect: {:?}", why),
+            None => match manager.connect() {
+                Err(err) => {
+                    match err {
+                        Error::IoError(ref err) if err.kind() == ErrorKind::ConnectionRefused => {
+                            err_counter += 1;
+                            warn!(
+                                "(Try {}/{}) Failed to connect: connection refused",
+                                err_counter, retries
+                            );
                         }
-                        thread::sleep(time::Duration::from_secs(10));
+                        why => error!("Failed to connect: {:?}", why),
                     }
-                    _ => manager.handshake_completed = true,
+                    thread::sleep(time::Duration::from_secs(5));
                 }
-            }
+                _ => manager.handshake_completed = true,
+            },
         }
     }
+
+    debug!("Ending sender loop");
 }
 
-fn send_and_receive(connection: &mut SocketConnection, inbound: &mut Tx, outbound: &Rx) -> Result<()> {
+fn send_and_receive(
+    connection: &mut SocketConnection,
+    inbound: &mut Tx,
+    outbound: &Rx,
+) -> Result<()> {
     while let Ok(msg) = outbound.try_recv() {
         connection.send(msg).expect("Failed to send outgoing data");
     }

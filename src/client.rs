@@ -31,8 +31,8 @@ impl Client {
         Self { connection_manager }
     }
 
-    pub fn start(&mut self) {
-        self.connection_manager.start();
+    pub fn start(&mut self, retries: u32) {
+        self.connection_manager.start(retries);
     }
 
     fn execute<A, E>(&mut self, cmd: Command, args: A, evt: Option<Event>) -> Result<Payload<E>>
