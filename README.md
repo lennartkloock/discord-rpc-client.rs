@@ -13,7 +13,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-discord-rpc-client = { git = "https://github.com/lennartkloock/discord-rpc-client.rs.git", version = "^0.3" }
+discord-rpc-client = { git = "https://github.com/lennartkloock/discord-rpc-client.rs.git", branch = "master" }
 ```
 
 
