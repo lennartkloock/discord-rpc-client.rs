@@ -49,6 +49,10 @@ impl Client {
         }
     }
 
+    pub fn is_connected(&self) -> bool {
+        self.connection_manager.handshake_completed()
+    }
+
     #[cfg(feature = "rich_presence")]
     pub fn set_activity(&mut self, activity: Activity) -> Result<Payload<Activity>> {
         self.execute(Command::SetActivity, SetActivityArgs::new(activity), None)

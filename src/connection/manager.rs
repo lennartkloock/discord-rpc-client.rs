@@ -79,6 +79,10 @@ impl Manager {
         self.handshake_completed = false;
         self.connection = Arc::new(None);
     }
+
+    pub fn handshake_completed(&self) -> bool {
+        self.handshake_completed
+    }
 }
 
 fn send_and_receive_loop(mut manager: Manager, retries: u32) {
