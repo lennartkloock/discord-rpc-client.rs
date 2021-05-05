@@ -1,8 +1,7 @@
 extern crate discord_rpc_client;
 extern crate simplelog;
 
-use std::{io, thread};
-use std::time::Duration;
+use std::io;
 
 use simplelog::*;
 
