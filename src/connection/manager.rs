@@ -13,7 +13,7 @@ type Rx = Receiver<Message>;
 
 #[derive(Clone)]
 pub struct Manager {
-    connection: Arc<Option<Mutex<SocketConnection>>>,
+    connection: Arc<Mutex<Option<SocketConnection>>>,
     client_id: u64,
     outbound: (Rx, Tx),
     inbound: (Rx, Tx),
@@ -22,7 +22,7 @@ pub struct Manager {
 
 impl Manager {
     pub fn new(client_id: u64) -> Self {
-        let connection = Arc::new(None);
+        let connection = Arc::new(Mutex::new(None));
         let (sender_o, receiver_o) = unbounded();
         let (sender_i, receiver_i) = unbounded();
 
@@ -68,9 +68,9 @@ impl Manager {
         new_connection.handshake(self.client_id)?;
         debug!("Handshake completed");
 
-        self.connection = Arc::new(Some(Mutex::new(new_connection)));
+        *self.connection.lock() = Some(new_connection);
 
-        debug!("Connected");
+        debug!("Connected: {:?}", self.is_connected());
 
         Ok(())
     }
@@ -78,11 +78,11 @@ impl Manager {
     fn disconnect(&mut self) {
         debug!("Disconnected");
         self.handshake_completed = false;
-        self.connection = Arc::new(None);
+        *self.connection.lock() = None;
     }
 
     pub fn is_connected(&self) -> bool {
-        self.connection.is_some()
+        self.connection.lock().is_some()
     }
 }
 
@@ -94,12 +94,12 @@ fn send_and_receive_loop(mut manager: Manager, retries: u32) {
 
     let mut err_counter = 0;
     while err_counter < retries {
-        let connection = manager.connection.clone();
+        let connection = Arc::clone(&manager.connection);
 
-        match *connection {
-            Some(ref conn) => {
-                let mut connection = conn.lock();
-                match send_and_receive(&mut *connection, &mut inbound, &outbound) {
+        let mut lock = connection.lock();
+        match *lock {
+            Some(ref mut conn) => {
+                match send_and_receive(conn, &mut inbound, &outbound) {
                     Err(Error::IoError(ref err)) if err.kind() == ErrorKind::WouldBlock => (),
                     Err(Error::IoError(_)) | Err(Error::ConnectionClosed) => manager.disconnect(),
                     Err(why) => error!("error: {}", why),
@@ -108,23 +108,26 @@ fn send_and_receive_loop(mut manager: Manager, retries: u32) {
 
                 thread::sleep(time::Duration::from_millis(500));
             }
-            None => match manager.connect() {
-                Err(err) => {
-                    match err {
-                        Error::IoError(ref err) if err.kind() == ErrorKind::ConnectionRefused => {
-                            err_counter += 1;
-                            warn!(
-                                "(Try {}/{}) Failed to connect: connection refused",
-                                err_counter, retries
-                            );
+            None => {
+                drop(lock);
+                match manager.connect() {
+                    Err(err) => {
+                        match err {
+                            Error::IoError(ref err) if err.kind() == ErrorKind::ConnectionRefused => {
+                                err_counter += 1;
+                                warn!(
+                                    "(Try {}/{}) Failed to connect: connection refused",
+                                    err_counter, retries
+                                );
+                            }
+                            why => error!("Failed to connect: {:?}", why),
                         }
-                        why => error!("Failed to connect: {:?}", why),
+                        thread::sleep(time::Duration::from_secs(5));
                     }
-                    thread::sleep(time::Duration::from_secs(5));
+                    _ => manager.handshake_completed = true,
                 }
-                _ => manager.handshake_completed = true,
             },
-        }
+        };
     }
 
     debug!("Ending sender loop");
