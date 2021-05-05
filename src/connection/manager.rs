@@ -112,21 +112,26 @@ fn send_and_receive_loop(mut manager: Manager, retries: u32) {
                 drop(lock);
                 match manager.connect() {
                     Err(err) => {
+                        err_counter += 1;
                         match err {
-                            Error::IoError(ref err) if err.kind() == ErrorKind::ConnectionRefused => {
-                                err_counter += 1;
-                                warn!(
-                                    "(Try {}/{}) Failed to connect: connection refused",
-                                    err_counter, retries
-                                );
-                            }
-                            why => error!("Failed to connect: {:?}", why),
+                            Error::IoError(ref err)
+                            if err.kind() == ErrorKind::ConnectionRefused =>
+                                {
+                                    warn!(
+                                        "(Try {}/{}) Failed to connect: connection refused",
+                                        err_counter, retries
+                                    );
+                                }
+                            why => error!(
+                                "(Try {}/{}) Failed to connect: {:?}",
+                                err_counter, retries, why
+                            ),
                         }
                         thread::sleep(time::Duration::from_secs(5));
                     }
                     _ => manager.handshake_completed = true,
                 }
-            },
+            }
         };
     }
 
