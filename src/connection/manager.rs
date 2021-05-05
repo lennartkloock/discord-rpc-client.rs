@@ -76,6 +76,7 @@ impl Manager {
     }
 
     fn disconnect(&mut self) {
+        debug!("Disconnected");
         self.handshake_completed = false;
         self.connection = Arc::new(None);
     }
