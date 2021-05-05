@@ -50,7 +50,7 @@ impl Client {
     }
 
     pub fn is_connected(&self) -> bool {
-        self.connection_manager.handshake_completed()
+        self.connection_manager.is_connected()
     }
 
     #[cfg(feature = "rich_presence")]

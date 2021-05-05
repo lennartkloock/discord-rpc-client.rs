@@ -56,7 +56,7 @@ impl Manager {
     }
 
     fn connect(&mut self) -> Result<()> {
-        if self.connection.is_some() {
+        if self.is_connected() {
             return Ok(());
         }
 
@@ -81,8 +81,8 @@ impl Manager {
         self.connection = Arc::new(None);
     }
 
-    pub fn handshake_completed(&self) -> bool {
-        self.handshake_completed
+    pub fn is_connected(&self) -> bool {
+        self.connection.is_some()
     }
 }
 
