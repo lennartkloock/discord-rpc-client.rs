@@ -70,7 +70,7 @@ impl Manager {
 
         *self.connection.lock() = Some(new_connection);
 
-        debug!("Connected: {:?}", self.is_connected());
+        debug!("Connected");
 
         Ok(())
     }
@@ -99,6 +99,7 @@ fn send_and_receive_loop(mut manager: Manager, retries: u32) {
         let mut lock = connection.lock();
         match *lock {
             Some(ref mut conn) => {
+                trace!("Already connected: Sending and receiving callbacks...");
                 match send_and_receive(conn, &mut inbound, &outbound) {
                     Err(Error::IoError(ref err)) if err.kind() == ErrorKind::WouldBlock => (),
                     Err(Error::IoError(_)) | Err(Error::ConnectionClosed) => manager.disconnect(),
@@ -110,6 +111,7 @@ fn send_and_receive_loop(mut manager: Manager, retries: u32) {
                 thread::sleep(time::Duration::from_millis(500));
             }
             None => {
+                debug!("Not connected: Attempting to open connection");
                 drop(lock);
                 match manager.connect() {
                     Err(err) => {
