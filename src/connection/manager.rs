@@ -97,6 +97,7 @@ fn send_and_receive_loop(mut manager: Manager, retries: u32) {
         let connection = Arc::clone(&manager.connection);
 
         let mut lock = connection.lock();
+        trace!("Locked in sender loop");
         match *lock {
             Some(ref mut conn) => {
                 trace!("Already connected: Sending and receiving callbacks...");
@@ -104,7 +105,7 @@ fn send_and_receive_loop(mut manager: Manager, retries: u32) {
                     Err(Error::IoError(ref err)) if err.kind() == ErrorKind::WouldBlock => (),
                     Err(Error::IoError(_)) | Err(Error::ConnectionClosed) => manager.disconnect(),
                     Err(why) => error!("error: {}", why),
-                    _ => (),
+                    _ => trace!("Everything nominal"),
                 }
 
                 drop(lock);
@@ -136,6 +137,7 @@ fn send_and_receive_loop(mut manager: Manager, retries: u32) {
                 }
             }
         };
+        trace!("One loop iteration finished");
     }
 
     debug!("Ending sender loop");
