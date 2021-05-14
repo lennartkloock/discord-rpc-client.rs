@@ -106,6 +106,7 @@ fn send_and_receive_loop(mut manager: Manager, retries: u32) {
                     _ => (),
                 }
 
+                drop(lock);
                 thread::sleep(time::Duration::from_millis(500));
             }
             None => {
