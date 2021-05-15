@@ -103,7 +103,8 @@ fn send_and_receive_loop(mut manager: Manager, retries: u32) {
                 trace!("Already connected: Sending and receiving callbacks...");
                 match send_and_receive(conn, &mut inbound, &outbound) {
                     Err(Error::IoError(ref err)) if err.kind() == ErrorKind::WouldBlock => (),
-                    Err(Error::IoError(e)) | Err(Error::ConnectionClosed) => {
+                    Err(Error::ConnectionClosed) => manager.disconnect(),
+                    Err(Error::IoError(e)) => {
                         error!("Disconnecting: {}", e);
                         manager.disconnect();
                     },
